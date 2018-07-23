@@ -9,10 +9,11 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: __dirname + '/dist',
-        library: 'aws_amplify_cache',
+        library: ['Amplify', 'Cache'],
         libraryTarget: 'umd',
         umdNamedDefine: true
     },
+    externals: {"@aws-amplify/core": "Amplify"},
     // Enable sourcemaps for debugging webpack's output.
     devtool: 'source-map',
     resolve: {

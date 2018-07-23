@@ -1,5 +1,16 @@
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const CompressionPlugin = require("compression-webpack-plugin")
+const CompressionPlugin = require("compression-webpack-plugin");
+
+function nameToTitleCase(str) {
+    str = str.startsWith('@aws-') ? str.replace('@aws-', '') : str;
+    return str
+        .replace(/\w+/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        })
+        .replace('-', '')
+        .replace('/', '.');
+}
+
 
 module.exports = {
     entry: {
@@ -9,10 +20,19 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: __dirname + '/dist',
-        library: 'aws_amplify_analytics',
+        library: ['Amplify', 'Analytics'],
         libraryTarget: 'umd',
         umdNamedDefine: true
     },
+    externals: [function(context, request, callback) {
+        if(request.startsWith('@aws-amplify')) {
+            console.log(request, ' => ', nameToTitleCase(request));
+            callback(null, `root ${nameToTitleCase(request)}`)
+        }
+        else {
+            callback();
+        }
+    }],
     // Enable sourcemaps for debugging webpack's output.
     devtool: 'source-map',
     resolve: {
